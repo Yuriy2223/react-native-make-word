@@ -52,3 +52,31 @@ Join our community of developers creating universal apps.
 expo install expo-dev-client
 npm run reset-project
 npx expo-doctor
+npm install react-native-draggable-flatlist
+npm install react-native-gesture-handler react-native-reanimated react-native-draggable
+expo install expo-linear-gradient
+expo install expo-secure-store
+
+# Видали папки з кешем та білдами
+
+rm -rf android/app/build
+rm -rf node_modules
+rm -rf .expo
+
+# Або на Windows:
+
+rmdir /s /q android\app\build
+rmdir /s /q node_modules
+rmdir /s /q .expo
+
+# Перевстанови залежності
+
+npm install
+
+# Очисти кеш Metro
+
+npx expo start --clear
+
+# У новому терміналі запусти нативну збірку:
+
+npx expo run:android
