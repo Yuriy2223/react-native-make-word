@@ -50,3 +50,5 @@ Join our community of developers creating universal apps.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
 
 expo install expo-dev-client
+npm run reset-project
+npx expo-doctor
