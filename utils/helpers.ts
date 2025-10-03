@@ -1,14 +1,21 @@
 import { ENCOURAGEMENT_MESSAGES, LETTER_COLORS } from "./constants";
 
-export const shuffleArray = <T>(array: T[]): T[] => {
+export const shuffleArray = <T>(array: T[], maxRetries: number = 10): T[] => {
   const newArray = [...array];
+
   for (let i = newArray.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
   }
-  if (newArray.join("") === array.join("") && array.length > 1) {
-    return shuffleArray(array);
+
+  if (
+    newArray.join("") === array.join("") &&
+    array.length > 1 &&
+    maxRetries > 0
+  ) {
+    return shuffleArray(array, maxRetries - 1);
   }
+
   return newArray;
 };
 
@@ -30,12 +37,6 @@ export const calculateStars = (attempts: number, elapsed: number): string => {
   return "☆☆☆";
 };
 
-// export const getRandomEncouragementMessage = (): string => {
-//   const { ENCOURAGEMENT_MESSAGES } = require("./constants");
-//   return ENCOURAGEMENT_MESSAGES[
-//     Math.floor(Math.random() * ENCOURAGEMENT_MESSAGES.length)
-//   ];
-// };
 export const getRandomEncouragementMessage = (): string => {
   return ENCOURAGEMENT_MESSAGES[
     Math.floor(Math.random() * ENCOURAGEMENT_MESSAGES.length)

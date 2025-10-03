@@ -1,6 +1,15 @@
 import { useCallback, useState } from "react";
 import { Character, Difficulty } from "../types/types";
-import { getRandomColor, shuffleArray } from "../utils/helpers";
+import { getRandomColor } from "../utils/helpers";
+
+const shuffleCharacters = <T>(array: T[]): T[] => {
+  const newArray = [...array];
+  for (let i = newArray.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+  }
+  return newArray;
+};
 
 export const useGameState = () => {
   const [difficulty, setDifficulty] = useState<Difficulty>("medium");
@@ -20,7 +29,9 @@ export const useGameState = () => {
       setShowHint(difficulty === "easy");
       setLastCheckedWord("");
 
-      const shuffled = shuffleArray([...upperWord]);
+      const letters = [...upperWord];
+      const shuffled = shuffleCharacters(letters);
+
       const newCharacters: Character[] = shuffled.map((char, index) => ({
         id: `${char}-${index}-${Date.now()}`,
         char,
@@ -41,11 +52,10 @@ export const useGameState = () => {
     setLastCheckedWord("");
   }, []);
 
-  const shuffleCharacters = useCallback(() => {
-    const shuffled = shuffleArray(characters);
-    setCharacters(shuffled);
+  const shuffleCharactersFunc = useCallback(() => {
+    setCharacters((prev) => shuffleCharacters(prev));
     setLastCheckedWord("");
-  }, [characters]);
+  }, []);
 
   const swapCharacters = useCallback((fromIndex: number, toIndex: number) => {
     setCharacters((prev) => {
@@ -56,6 +66,7 @@ export const useGameState = () => {
       ];
       return newChars;
     });
+    setLastCheckedWord("");
   }, []);
 
   const incrementAttempts = useCallback(() => {
@@ -84,7 +95,7 @@ export const useGameState = () => {
     setLastCheckedWord,
     startGame,
     resetGame,
-    shuffleCharacters,
+    shuffleCharacters: shuffleCharactersFunc,
     swapCharacters,
     incrementAttempts,
     getCurrentWord,

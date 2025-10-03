@@ -1,5 +1,5 @@
 import { GameStats } from "@/types/types";
-import * as SecureStore from "expo-secure-store";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const STATS_KEY = "wordGameStats";
 
@@ -14,7 +14,7 @@ export const getDefaultStats = (): GameStats => ({
 
 export const loadStats = async (): Promise<GameStats> => {
   try {
-    const saved = await SecureStore.getItemAsync(STATS_KEY);
+    const saved = await AsyncStorage.getItem(STATS_KEY);
     return saved ? JSON.parse(saved) : getDefaultStats();
   } catch {
     return getDefaultStats();
@@ -23,7 +23,7 @@ export const loadStats = async (): Promise<GameStats> => {
 
 export const saveStats = async (stats: GameStats): Promise<void> => {
   try {
-    await SecureStore.setItemAsync(STATS_KEY, JSON.stringify(stats));
+    await AsyncStorage.setItem(STATS_KEY, JSON.stringify(stats));
   } catch (error) {
     console.error("Failed to save stats:", error);
   }
@@ -31,8 +31,78 @@ export const saveStats = async (stats: GameStats): Promise<void> => {
 
 export const resetStats = async (): Promise<void> => {
   try {
-    await SecureStore.deleteItemAsync(STATS_KEY);
+    await AsyncStorage.removeItem(STATS_KEY);
   } catch (error) {
     console.error("Failed to reset stats:", error);
   }
 };
+/************************************************ */
+// // Зберігання в пам'яті (працює одразу, без нативних модулів)
+
+// import { GameStats } from "@/types/types";
+
+// let memoryStats: GameStats | null = null;
+
+// export const getDefaultStats = (): GameStats => ({
+//   easy: { played: 0, won: 0, bestTime: null, totalStars: 0 },
+//   medium: { played: 0, won: 0, bestTime: null, totalStars: 0 },
+//   hard: { played: 0, won: 0, bestTime: null, totalStars: 0 },
+//   history: [],
+//   totalGames: 0,
+//   totalWins: 0,
+// });
+
+// export const loadStats = async (): Promise<GameStats> => {
+//   if (!memoryStats) {
+//     memoryStats = getDefaultStats();
+//   }
+//   return memoryStats;
+// };
+
+// export const saveStats = async (stats: GameStats): Promise<void> => {
+//   memoryStats = stats;
+// };
+
+// export const resetStats = async (): Promise<void> => {
+//   memoryStats = getDefaultStats();
+// };
+/************************************************ */
+// import { GameStats } from "@/types/types";
+// import * as SecureStore from "expo-secure-store";
+
+// const STATS_KEY = "wordGameStats";
+
+// export const getDefaultStats = (): GameStats => ({
+//   easy: { played: 0, won: 0, bestTime: null, totalStars: 0 },
+//   medium: { played: 0, won: 0, bestTime: null, totalStars: 0 },
+//   hard: { played: 0, won: 0, bestTime: null, totalStars: 0 },
+//   history: [],
+//   totalGames: 0,
+//   totalWins: 0,
+// });
+
+// export const loadStats = async (): Promise<GameStats> => {
+//   try {
+//     const saved = await SecureStore.getItemAsync(STATS_KEY);
+//     return saved ? JSON.parse(saved) : getDefaultStats();
+//   } catch {
+//     return getDefaultStats();
+//   }
+// };
+
+// export const saveStats = async (stats: GameStats): Promise<void> => {
+//   try {
+//     await SecureStore.setItemAsync(STATS_KEY, JSON.stringify(stats));
+//   } catch (error) {
+//     console.error("Failed to save stats:", error);
+//   }
+// };
+
+// export const resetStats = async (): Promise<void> => {
+//   try {
+//     await SecureStore.deleteItemAsync(STATS_KEY);
+//   } catch (error) {
+//     console.error("Failed to reset stats:", error);
+//   }
+// };
+/************************************************************ */

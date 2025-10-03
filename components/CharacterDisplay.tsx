@@ -19,12 +19,28 @@ export const CharacterDisplay: React.FC<Props> = ({
     { x: number; y: number; width: number; height: number }[]
   >([]);
 
+  const containerRef = useRef<View>(null);
+  const containerPosition = useRef({ x: 0, y: 0 });
+
+  const handleContainerLayout = () => {
+    containerRef.current?.measureInWindow((x, y) => {
+      containerPosition.current = { x, y };
+    });
+  };
+
   const handleLayout = (index: number, event: LayoutChangeEvent) => {
     const { x, y, width, height } = event.nativeEvent.layout;
     characterPositions.current[index] = { x, y, width, height };
   };
 
-  const handleDragEnd = (fromIndex: number, x: number, y: number) => {
+  const handleDragEnd = (
+    fromIndex: number,
+    absoluteX: number,
+    absoluteY: number
+  ) => {
+    const relativeX = absoluteX - containerPosition.current.x;
+    const relativeY = absoluteY - containerPosition.current.y;
+
     let closestIndex = fromIndex;
     let closestDistance = Infinity;
 
@@ -34,10 +50,10 @@ export const CharacterDisplay: React.FC<Props> = ({
       const centerX = pos.x + pos.width / 2;
       const centerY = pos.y + pos.height / 2;
       const distance = Math.sqrt(
-        Math.pow(x - centerX, 2) + Math.pow(y - centerY, 2)
+        Math.pow(relativeX - centerX, 2) + Math.pow(relativeY - centerY, 2)
       );
 
-      if (distance < closestDistance) {
+      if (distance < closestDistance && distance < 150) {
         closestDistance = distance;
         closestIndex = index;
       }
@@ -49,9 +65,13 @@ export const CharacterDisplay: React.FC<Props> = ({
   };
 
   return (
-    <View style={styles.container}>
+    <View
+      ref={containerRef}
+      style={styles.container}
+      onLayout={handleContainerLayout}
+    >
       {characters.map((char, index) => (
-        <View key={char.id} onLayout={(e) => handleLayout(index, e)}>
+        <View key={index} onLayout={(e) => handleLayout(index, e)}>
           <Character
             char={char.char}
             color={char.color}

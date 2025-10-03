@@ -7,7 +7,7 @@ import { SuccessModal } from "@/components/SuccessModal";
 import { calculateStars, getRandomEncouragementMessage } from "@/utils/helpers";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Alert, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useGameState } from "../../hooks/useGameState";
 import { useStats } from "../../hooks/useStats";
