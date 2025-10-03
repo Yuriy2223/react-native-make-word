@@ -1,5 +1,5 @@
-import { Animated, StyleSheet, Text } from "react-native";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import { useRef } from "react";
+import { Animated, PanResponder, StyleSheet, Text } from "react-native";
 
 interface Props {
   char: string;
@@ -16,30 +16,29 @@ export const Character: React.FC<Props> = ({
   isCorrect,
   onDragEnd,
 }) => {
-  const translateX = new Animated.Value(0);
-  const translateY = new Animated.Value(0);
-  const scale = new Animated.Value(1);
+  const pan = useRef(new Animated.ValueXY()).current;
+  const scale = useRef(new Animated.Value(1)).current;
 
-  const gesture = Gesture.Pan()
-    .onStart(() => {
-      scale.setValue(1.2);
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onPanResponderGrant: () => {
+        scale.setValue(1.2);
+      },
+      onPanResponderMove: Animated.event([null, { dx: pan.x, dy: pan.y }], {
+        useNativeDriver: false,
+      }),
+      onPanResponderRelease: (e, gestureState) => {
+        scale.setValue(1);
+        onDragEnd(index, gestureState.moveX, gestureState.moveY);
+
+        Animated.spring(pan, {
+          toValue: { x: 0, y: 0 },
+          useNativeDriver: false,
+        }).start();
+      },
     })
-    .onUpdate((event) => {
-      translateX.setValue(event.translationX);
-      translateY.setValue(event.translationY);
-    })
-    .onEnd((event) => {
-      scale.setValue(1);
-      onDragEnd(index, event.absoluteX, event.absoluteY);
-      Animated.spring(translateX, {
-        toValue: 0,
-        useNativeDriver: true,
-      }).start();
-      Animated.spring(translateY, {
-        toValue: 0,
-        useNativeDriver: true,
-      }).start();
-    });
+  ).current;
 
   const getBackgroundColor = () => {
     if (isCorrect === true) return "#00b894";
@@ -48,24 +47,23 @@ export const Character: React.FC<Props> = ({
   };
 
   return (
-    <GestureDetector gesture={gesture}>
-      <Animated.View
-        style={[
-          styles.container,
-          {
-            borderColor: color,
-            backgroundColor: getBackgroundColor(),
-            transform: [{ translateX }, { translateY }, { scale }],
-          },
-        ]}
+    <Animated.View
+      {...panResponder.panHandlers}
+      style={[
+        styles.container,
+        {
+          borderColor: color,
+          backgroundColor: getBackgroundColor(),
+          transform: [{ translateX: pan.x }, { translateY: pan.y }, { scale }],
+        },
+      ]}
+    >
+      <Text
+        style={[styles.text, { color: isCorrect !== null ? "#fff" : color }]}
       >
-        <Text
-          style={[styles.text, { color: isCorrect !== null ? "#fff" : color }]}
-        >
-          {char}
-        </Text>
-      </Animated.View>
-    </GestureDetector>
+        {char}
+      </Text>
+    </Animated.View>
   );
 };
 

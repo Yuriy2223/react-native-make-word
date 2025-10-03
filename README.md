@@ -80,3 +80,5 @@ npx expo start --clear
 # У новому терміналі запусти нативну збірку:
 
 npx expo run:android
+
+expo prebuild --clean

@@ -1,6 +1,5 @@
 import { useRef } from "react";
 import { LayoutChangeEvent, StyleSheet, View } from "react-native";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { Character as CharacterType } from "../types/types";
 import { Character } from "./Character";
 
@@ -13,7 +12,6 @@ interface Props {
 
 export const CharacterDisplay: React.FC<Props> = ({
   characters,
-  originalWord,
   checkResults,
   onSwap,
 }) => {
@@ -51,28 +49,23 @@ export const CharacterDisplay: React.FC<Props> = ({
   };
 
   return (
-    <GestureHandlerRootView style={styles.root}>
-      <View style={styles.container}>
-        {characters.map((char, index) => (
-          <View key={char.id} onLayout={(e) => handleLayout(index, e)}>
-            <Character
-              char={char.char}
-              color={char.color}
-              index={index}
-              isCorrect={checkResults[index]}
-              onDragEnd={handleDragEnd}
-            />
-          </View>
-        ))}
-      </View>
-    </GestureHandlerRootView>
+    <View style={styles.container}>
+      {characters.map((char, index) => (
+        <View key={char.id} onLayout={(e) => handleLayout(index, e)}>
+          <Character
+            char={char.char}
+            color={char.color}
+            index={index}
+            isCorrect={checkResults[index]}
+            onDragEnd={handleDragEnd}
+          />
+        </View>
+      ))}
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  root: {
-    flex: 1,
-  },
   container: {
     flexDirection: "row",
     flexWrap: "wrap",
