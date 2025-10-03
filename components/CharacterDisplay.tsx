@@ -17,9 +17,6 @@ export const CharacterDisplay: React.FC<Props> = ({
   checkResults,
   onSwap,
 }) => {
-  // const characterPositions = useRef<
-  //   Array<{ x: number; y: number; width: number; height: number }>
-  // >([]);
   const characterPositions = useRef<
     { x: number; y: number; width: number; height: number }[]
   >([]);
