@@ -54,8 +54,22 @@ npm run reset-project
 npx expo-doctor
 npm install react-native-draggable-flatlist
 expo install expo-linear-gradient
-expo install expo-secure-store
+
+<!-- expo install expo-secure-store -->
+
 npx expo install react-native-gesture-handler
+npx expo install @react-native-async-storage/async-storage
+npm uninstall expo-secure-store @react-native-async-storage/async-storage
+
+npx expo start -c
+
+npx expo prebuild --clean
+npx expo run:android
+/******************\*\*******************\*******************\*\*******************
+Коли захочеш постійне зберігання:
+Тоді зробиш npm run android (це автоматично зібере і встановить на телефон), і тоді вже зможеш використати AsyncStorage.
+Але для розробки і тестування - це рішення цілком достатнє.
+/******************\*\*******************\*******************\*\*******************
 
 # Видали папки з кешем та білдами
 
