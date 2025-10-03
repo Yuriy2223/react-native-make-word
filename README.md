@@ -53,9 +53,9 @@ expo install expo-dev-client
 npm run reset-project
 npx expo-doctor
 npm install react-native-draggable-flatlist
-npm install react-native-gesture-handler react-native-reanimated react-native-draggable
 expo install expo-linear-gradient
 expo install expo-secure-store
+npx expo install react-native-gesture-handler
 
 # Видали папки з кешем та білдами
 
