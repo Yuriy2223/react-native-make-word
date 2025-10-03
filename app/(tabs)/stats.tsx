@@ -1,20 +1,20 @@
+import { useFocusEffect } from "@react-navigation/native";
+import { LinearGradient } from "expo-linear-gradient";
 import React, { useState } from "react";
 import {
+  Alert,
   ScrollView,
-  View,
+  StyleSheet,
   Text,
   TouchableOpacity,
-  StyleSheet,
-  Alert,
+  View,
 } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
 import { useStats } from "../../hooks/useStats";
 import { resetStats } from "../../utils/storage";
-import { useFocusEffect } from "@react-navigation/native";
 
 export default function StatsScreen() {
-  const { stats, saveGameResult } = useStats();
-  const [refreshKey, setRefreshKey] = useState(0);
+  const { stats } = useStats();
+  const [, setRefreshKey] = useState(0);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -23,7 +23,7 @@ export default function StatsScreen() {
   );
 
   const handleReset = () => {
-    Alert.alert("Скинути статистику", "Точно хочеш скинути всю статистику?", [
+    Alert.alert("Скинути статистику?", "Точно хочеш скинути всю статистику?", [
       { text: "Скасувати", style: "cancel" },
       {
         text: "Скинути",

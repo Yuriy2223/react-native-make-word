@@ -1,14 +1,13 @@
 import { Stack } from "expo-router";
-import { StyleSheet } from "react-native";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
+import { StyleSheet, View } from "react-native";
 
 export default function RootLayout() {
   return (
-    <GestureHandlerRootView style={styles.container}>
+    <View style={styles.container}>
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="(tabs)" />
       </Stack>
-    </GestureHandlerRootView>
+    </View>
   );
 }
 
