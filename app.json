@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "react-native-make-word",
-    "slug": "Word-Game",
+    "name": "Word-Game",
+    "slug": "react-native-make-word",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/favicon.png",
@@ -47,6 +47,7 @@
       "eas": {
         "projectId": "215b51a3-f979-479c-839b-d1a0c5fc57af"
       }
-    }
+    },
+    "owner": "yuriy2223"
   }
 }
