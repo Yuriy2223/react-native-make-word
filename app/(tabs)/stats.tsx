@@ -1,6 +1,6 @@
 import { useFocusEffect } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useState } from "react";
+import { useCallback } from "react";
 import {
   Alert,
   ScrollView,
@@ -13,13 +13,12 @@ import { useStats } from "../../hooks/useStats";
 import { resetStats } from "../../utils/storage";
 
 export default function StatsScreen() {
-  const { stats } = useStats();
-  const [, setRefreshKey] = useState(0);
+  const { stats, reloadStats } = useStats();
 
   useFocusEffect(
-    React.useCallback(() => {
-      setRefreshKey((prev) => prev + 1);
-    }, [])
+    useCallback(() => {
+      reloadStats();
+    }, [reloadStats])
   );
 
   const handleReset = () => {
@@ -30,7 +29,7 @@ export default function StatsScreen() {
         style: "destructive",
         onPress: async () => {
           await resetStats();
-          setRefreshKey((prev) => prev + 1);
+          await reloadStats();
         },
       },
     ]);
