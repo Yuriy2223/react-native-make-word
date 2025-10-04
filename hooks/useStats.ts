@@ -5,8 +5,13 @@ import { getDefaultStats, loadStats, saveStats } from "../utils/storage";
 export const useStats = () => {
   const [stats, setStats] = useState<GameStats>(getDefaultStats());
 
+  const reloadStats = async () => {
+    const loaded = await loadStats();
+    setStats(loaded);
+  };
+
   useEffect(() => {
-    loadStats().then(setStats);
+    reloadStats();
   }, []);
 
   const saveGameResult = async (
@@ -53,5 +58,5 @@ export const useStats = () => {
     await saveStats(newStats);
   };
 
-  return { stats, saveGameResult };
+  return { stats, saveGameResult, reloadStats };
 };
