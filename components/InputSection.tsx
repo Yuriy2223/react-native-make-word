@@ -8,7 +8,7 @@ import {
   View,
 } from "react-native";
 import { Difficulty } from "../types/types";
-import { DIFFICULTY_CONFIG } from "../utils/constants";
+import { DIFFICULTY_CONFIG, getRandomWord } from "../utils/constants";
 import { CustomAlert } from "./CustomAlert";
 
 interface Props {
@@ -20,6 +20,11 @@ export const InputSection: React.FC<Props> = ({ difficulty, onStart }) => {
   const [text, setText] = useState("");
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
+
+  const handleRandomWord = () => {
+    const randomWord = getRandomWord(difficulty);
+    setText(randomWord);
+  };
 
   const handleStart = () => {
     const trimmed = text.trim();
@@ -53,9 +58,9 @@ export const InputSection: React.FC<Props> = ({ difficulty, onStart }) => {
   }[difficulty];
 
   const difficultyColor = {
-    easy: "#00b894",
-    medium: "#fdcb6e",
-    hard: "#d63031",
+    easy: "#55efc4",
+    medium: "#feca57",
+    hard: "#ff7675",
   }[difficulty];
 
   return (
@@ -73,6 +78,12 @@ export const InputSection: React.FC<Props> = ({ difficulty, onStart }) => {
           maxLength={20}
           autoCapitalize="characters"
         />
+        <TouchableOpacity
+          style={styles.randomButton}
+          onPress={handleRandomWord}
+        >
+          <Ionicons name="shuffle" size={20} color="#667eea" />
+        </TouchableOpacity>
       </View>
 
       <TouchableOpacity
@@ -81,12 +92,6 @@ export const InputSection: React.FC<Props> = ({ difficulty, onStart }) => {
         disabled={!text.trim()}
       >
         <View style={styles.buttonContent}>
-          <Ionicons
-            name="play-circle"
-            size={20}
-            color="#fff"
-            style={styles.buttonIcon}
-          />
           <Text style={styles.buttonText}>Почати гру</Text>
         </View>
       </TouchableOpacity>
@@ -136,6 +141,17 @@ export const InputSection: React.FC<Props> = ({ difficulty, onStart }) => {
         </View>
         <View style={styles.instructionItem}>
           <Ionicons
+            name="shuffle"
+            size={14}
+            color="#2d3436"
+            style={styles.instructionIcon}
+          />
+          <Text style={styles.instructionsText}>
+            Кнопка 🔀 - вибери випадкове слово за рівнем складності
+          </Text>
+        </View>
+        <View style={styles.instructionItem}>
+          <Ionicons
             name="eye"
             size={14}
             color="#2d3436"
@@ -179,10 +195,18 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     padding: 10,
     paddingLeft: 36,
+    paddingRight: 50,
     fontSize: 22,
     backgroundColor: "rgba(254, 255, 254, 0.95)",
     color: "#667eea",
     fontWeight: "400",
+  },
+  randomButton: {
+    position: "absolute",
+    right: 8,
+    backgroundColor: "rgba(102, 126, 234, 0.1)",
+    padding: 8,
+    borderRadius: 10,
   },
   button: {
     backgroundColor: "#667eea",
