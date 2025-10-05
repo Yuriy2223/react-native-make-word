@@ -18,6 +18,7 @@
         "backgroundColor": "#55efc4",
         "foregroundImage": "./assets/favicon.png"
       },
+      "versionCode": 1,
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "package": "com.yuriyshukan.makeword"
