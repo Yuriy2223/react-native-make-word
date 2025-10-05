@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { LayoutChangeEvent, StyleSheet, View } from "react-native";
 import { Character as CharacterType } from "../types/types";
 import { Character } from "./Character";
@@ -10,6 +10,12 @@ interface Props {
   onSwap: (fromIndex: number, toIndex: number) => void;
 }
 
+const devLog = (...args: any[]) => {
+  if (__DEV__) {
+    console.log(...args);
+  }
+};
+
 export const CharacterDisplay: React.FC<Props> = ({
   characters,
   checkResults,
@@ -19,31 +25,41 @@ export const CharacterDisplay: React.FC<Props> = ({
     { x: number; y: number; width: number; height: number }[]
   >([]);
 
-  const containerRef = useRef<View>(null);
-  const containerPosition = useRef({ x: 0, y: 0 });
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      containerRef.current?.measureInWindow((x, y) => {
-        containerPosition.current = { x, y };
-      });
-    }, 50);
-    return () => clearTimeout(timer);
+  const characterRefs = useRef<(View | null)[]>([]);
+  const updatePositions = useCallback(() => {
+    characterRefs.current.forEach((view, index) => {
+      if (view && view.measureInWindow) {
+        view.measureInWindow(
+          (x: number, y: number, width: number, height: number) => {
+            characterPositions.current[index] = { x, y, width, height };
+            devLog(`Position [${index}] ${characters[index]?.char}:`, {
+              x: x.toFixed(1),
+              y: y.toFixed(1),
+            });
+          }
+        );
+      }
+    });
   }, [characters]);
 
-  const handleContainerLayout = () => {
-    containerRef.current?.measureInWindow((x, y) => {
-      containerPosition.current = { x, y };
-    });
-  };
+  useEffect(() => {
+    const timer = setTimeout(updatePositions, 100);
+    return () => clearTimeout(timer);
+  }, [characters, updatePositions]);
 
   const handleLayout = (index: number, event: LayoutChangeEvent) => {
-    const { x, y, width, height } = event.nativeEvent.layout;
-    characterPositions.current[index] = { x, y, width, height };
-    // console.log(`Layout [${index}] ${characters[index]?.char}:`, {
-    //   x: x.toFixed(1),
-    //   y: y.toFixed(1),
-    // });
+    const view = event.target as any;
+    if (view && view.measureInWindow) {
+      view.measureInWindow(
+        (x: number, y: number, width: number, height: number) => {
+          characterPositions.current[index] = { x, y, width, height };
+          devLog(`Updated [${index}] ${characters[index]?.char}:`, {
+            x: x.toFixed(1),
+            y: y.toFixed(1),
+          });
+        }
+      );
+    }
   };
 
   const handleDragEnd = (
@@ -51,24 +67,8 @@ export const CharacterDisplay: React.FC<Props> = ({
     absoluteX: number,
     absoluteY: number
   ) => {
-    // console.log("=== DRAG END ===");
-    // console.log("From:", fromIndex, characters[fromIndex]?.char);
-    // console.log("Absolute:", absoluteX, absoluteY);
-    // console.log("Container:", containerPosition.current);
-
-    const relativeX = absoluteX - containerPosition.current.x;
-    const relativeY = absoluteY - containerPosition.current.y;
-
-    // console.log("Relative:", relativeX, relativeY);
-    // console.log("Available positions:", characterPositions.current.length);
-
-    const fromPos = characterPositions.current[fromIndex];
-    if (!fromPos) {
-      // console.log("NO FROM POSITION");
-      return;
-    }
-    const fromCenterY = fromPos.y + fromPos.height / 2;
-    // console.log("From center Y:", fromCenterY.toFixed(1));
+    devLog("From:", fromIndex, characters[fromIndex]?.char);
+    devLog("Drop at:", absoluteX.toFixed(1), absoluteY.toFixed(1));
 
     let closestIndex = fromIndex;
     let closestDistance = Infinity;
@@ -78,50 +78,44 @@ export const CharacterDisplay: React.FC<Props> = ({
 
       const centerX = pos.x + pos.width / 2;
       const centerY = pos.y + pos.height / 2;
-      const distanceY = Math.abs(fromCenterY - centerY);
-
-      // console.log(
-      //   `[${index}] ${characters[index]?.char}: distanceY=${distanceY.toFixed(
-      //     1
-      //   )}`
-      // );
-
-      if (distanceY > 50) {
-        // console.log("  -> DIFFERENT ROW");
-        return;
-      }
 
       const distance = Math.sqrt(
-        Math.pow(relativeX - centerX, 2) + Math.pow(relativeY - centerY, 2)
+        Math.pow(absoluteX - centerX, 2) + Math.pow(absoluteY - centerY, 2)
       );
 
-      // console.log(`  -> distance=${distance.toFixed(1)}`);
+      devLog(
+        `[${index}] ${characters[index]?.char} at (${centerX.toFixed(
+          1
+        )}, ${centerY.toFixed(1)}): distance=${distance.toFixed(1)}`
+      );
 
       if (distance < closestDistance && distance < 100) {
         closestDistance = distance;
         closestIndex = index;
-        // console.log("  -> NEW CLOSEST");
+        devLog("  -> NEW CLOSEST");
       }
     });
 
-    // console.log("Result:", closestIndex, "distance:", closestDistance);
+    devLog("Result:", closestIndex, "distance:", closestDistance.toFixed(1));
 
     if (closestIndex !== fromIndex) {
-      // console.log("SWAPPING:", fromIndex, "↔", closestIndex);
+      devLog("SWAPPING:", fromIndex, "↔", closestIndex);
       onSwap(fromIndex, closestIndex);
     } else {
-      // console.log("NO SWAP");
+      devLog("NO SWAP");
     }
   };
 
   return (
-    <View
-      ref={containerRef}
-      style={styles.container}
-      onLayout={handleContainerLayout}
-    >
+    <View style={styles.container}>
       {characters.map((char, index) => (
-        <View key={char.id} onLayout={(e) => handleLayout(index, e)}>
+        <View
+          key={`${char.id}-${index}`}
+          ref={(ref) => {
+            characterRefs.current[index] = ref;
+          }}
+          onLayout={(e) => handleLayout(index, e)}
+        >
           <Character
             char={char.char}
             color={char.color}

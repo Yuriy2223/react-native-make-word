@@ -36,34 +36,3 @@ export const resetStats = async (): Promise<void> => {
     console.error("Failed to reset stats:", error);
   }
 };
-
-/************************************************ */
-
-// Зберігання в пам'яті (працює одразу, без нативних модулів)
-// import { GameStats } from "@/types/types";
-
-// let memoryStats: GameStats | null = null;
-
-// export const getDefaultStats = (): GameStats => ({
-//   easy: { played: 0, won: 0, bestTime: null, totalStars: 0 },
-//   medium: { played: 0, won: 0, bestTime: null, totalStars: 0 },
-//   hard: { played: 0, won: 0, bestTime: null, totalStars: 0 },
-//   history: [],
-//   totalGames: 0,
-//   totalWins: 0,
-// });
-
-// export const loadStats = async (): Promise<GameStats> => {
-//   if (!memoryStats) {
-//     memoryStats = getDefaultStats();
-//   }
-//   return memoryStats;
-// };
-
-// export const saveStats = async (stats: GameStats): Promise<void> => {
-//   memoryStats = stats;
-// };
-
-// export const resetStats = async (): Promise<void> => {
-//   memoryStats = getDefaultStats();
-// };
