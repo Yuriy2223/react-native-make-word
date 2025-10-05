@@ -1,4 +1,5 @@
 import { CharacterDisplay } from "@/components/CharacterDisplay";
+import { CustomAlert } from "@/components/CustomAlert";
 import { DifficultySelector } from "@/components/DifficultySelector";
 import { GameControls } from "@/components/GameControls";
 import { InputSection } from "@/components/InputSection";
@@ -8,7 +9,7 @@ import { calculateStars, getRandomEncouragementMessage } from "@/utils/helpers";
 import * as Haptics from "expo-haptics";
 import { LinearGradient } from "expo-linear-gradient";
 import { useEffect, useState } from "react";
-import { Alert, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useGameState } from "../../hooks/useGameState";
 import { useStats } from "../../hooks/useStats";
 import { useTimer } from "../../hooks/useTimer";
@@ -37,7 +38,9 @@ export default function GameScreen() {
   const { saveGameResult } = useStats();
   const [checkResults, setCheckResults] = useState<(boolean | null)[]>([]);
   const [showSuccess, setShowSuccess] = useState(false);
-  const [currentStars, setCurrentStars] = useState("☆☆☆");
+  const [currentStars, setCurrentStars] = useState(0);
+  const [showEncouragement, setShowEncouragement] = useState(false);
+  const [encouragementMsg, setEncouragementMsg] = useState("");
 
   useEffect(() => {
     if (characters.length > 0) {
@@ -82,7 +85,8 @@ export default function GameScreen() {
     } else {
       await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
       setTimeout(() => {
-        Alert.alert("", getRandomEncouragementMessage());
+        setEncouragementMsg(getRandomEncouragementMessage());
+        setShowEncouragement(true);
       }, 300);
     }
   };
@@ -91,7 +95,7 @@ export default function GameScreen() {
     resetGame();
     setCheckResults([]);
     setShowSuccess(false);
-    setCurrentStars("☆☆☆");
+    setCurrentStars(0);
   };
 
   const handleSuccessClose = () => {
@@ -110,54 +114,63 @@ export default function GameScreen() {
         style={styles.container}
         contentContainerStyle={styles.content}
       >
-        <View style={styles.card}>
-          <Text style={styles.title}>Склади слово 🎨</Text>
-          <Text style={styles.subtitle}>Стань чемпіоном складання слів!</Text>
-
-          <DifficultySelector selected={difficulty} onSelect={setDifficulty} />
-
-          <StatsPanel time={elapsed} attempts={attempts} stars={stars} />
-
-          {!isGameActive && (
-            <InputSection difficulty={difficulty} onStart={startGame} />
-          )}
-
-          {showHint && isGameActive && (
-            <View style={styles.hintContainer}>
-              <Text style={styles.hintText}>{originalWord}</Text>
-            </View>
-          )}
-
-          {isGameActive && (
-            <>
-              <CharacterDisplay
-                characters={characters}
-                originalWord={originalWord}
-                checkResults={checkResults}
-                onSwap={swapCharacters}
-              />
-
-              <GameControls
-                canShowHint={difficulty === "medium"}
-                showHint={showHint}
-                onToggleHint={toggleHint}
-                onShuffle={shuffleCharacters}
-                onReset={handleReset}
-                onCheck={handleCheck}
-                isGameActive={isGameActive}
-                isCheckDisabled={
-                  lastCheckedWord === getCurrentWord() && lastCheckedWord !== ""
-                }
-              />
-            </>
-          )}
+        <View style={styles.titleRow}>
+          <Image
+            source={require("../../assets/favicon.png")}
+            style={styles.logo}
+          />
+          <Text style={styles.titleText}>Склади слово 🎨</Text>
         </View>
-      </ScrollView>
+        <Text style={styles.subtitle}>Стань чемпіоном складання слів!</Text>
 
+        <DifficultySelector selected={difficulty} onSelect={setDifficulty} />
+
+        <StatsPanel time={elapsed} attempts={attempts} stars={stars} />
+
+        {!isGameActive && (
+          <InputSection difficulty={difficulty} onStart={startGame} />
+        )}
+
+        {showHint && isGameActive && (
+          <View style={styles.hintContainer}>
+            <Text style={styles.hintText}>{originalWord}</Text>
+          </View>
+        )}
+
+        {isGameActive && (
+          <>
+            <CharacterDisplay
+              characters={characters}
+              originalWord={originalWord}
+              checkResults={checkResults}
+              onSwap={swapCharacters}
+            />
+
+            <GameControls
+              canShowHint={difficulty === "medium"}
+              showHint={showHint}
+              onToggleHint={toggleHint}
+              onShuffle={shuffleCharacters}
+              onReset={handleReset}
+              onCheck={handleCheck}
+              isGameActive={isGameActive}
+              isCheckDisabled={
+                lastCheckedWord === getCurrentWord() && lastCheckedWord !== ""
+              }
+            />
+          </>
+        )}
+      </ScrollView>
       <SuccessModal
         visible={showSuccess}
         stars={currentStars}
         onClose={handleSuccessClose}
+      />
+      <CustomAlert
+        visible={showEncouragement}
+        message={encouragementMsg}
+        type="warning"
+        onClose={() => setShowEncouragement(false)}
       />
     </LinearGradient>
   );
@@ -171,33 +184,24 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    padding: 15,
-  },
-  card: {
-    backgroundColor: "rgba(255, 255, 255, 0.98)",
-    borderRadius: 20,
-    padding: 20,
-    borderWidth: 3,
-    borderColor: "#fff",
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: "bold",
-    textAlign: "center",
-    marginBottom: 10,
-    color: "#667eea",
+    padding: 12,
+    paddingTop: 50,
   },
   subtitle: {
     fontSize: 16,
     textAlign: "center",
-    color: "#666",
-    marginBottom: 20,
+    color: "#FFFFFF",
+    marginBottom: 24,
+    textShadowColor: "rgba(0, 0, 0, 0.2)",
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 3,
   },
   hintContainer: {
-    backgroundColor: "rgba(102, 126, 234, 0.2)",
+    backgroundColor: "rgba(255, 255, 255, 0.95)",
     borderRadius: 15,
     padding: 15,
     marginBottom: 20,
+    marginHorizontal: 4,
     borderWidth: 2,
     borderStyle: "dashed",
     borderColor: "#667eea",
@@ -208,5 +212,24 @@ const styles = StyleSheet.create({
     color: "#667eea",
     letterSpacing: 8,
     textAlign: "center",
+  },
+  titleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 8,
+  },
+  logo: {
+    width: 50,
+    height: 50,
+    marginRight: 10,
+  },
+  titleText: {
+    fontSize: 32,
+    fontWeight: "bold",
+    color: "#FFFFFF",
+    textShadowColor: "rgba(0, 0, 0, 0.3)",
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
   },
 });

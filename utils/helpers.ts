@@ -29,12 +29,12 @@ export const formatTime = (seconds: number): string => {
   return `${String(minutes).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
 };
 
-export const calculateStars = (attempts: number, elapsed: number): string => {
-  if (attempts === 0) return "⭐⭐⭐";
-  if (elapsed < 30 && attempts === 1) return "⭐⭐⭐";
-  if (elapsed < 60 && attempts <= 2) return "⭐⭐☆";
-  if (attempts <= 3) return "⭐☆☆";
-  return "☆☆☆";
+export const calculateStars = (attempts: number, elapsed: number): number => {
+  if (attempts === 0) return 3;
+  if (elapsed < 30 && attempts === 1) return 3;
+  if (elapsed < 60 && attempts <= 2) return 2;
+  if (attempts <= 3) return 1;
+  return 0;
 };
 
 export const getRandomEncouragementMessage = (): string => {

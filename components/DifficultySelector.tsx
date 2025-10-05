@@ -1,3 +1,4 @@
+import { Ionicons } from "@expo/vector-icons";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Difficulty } from "../types/types";
 
@@ -17,11 +18,20 @@ export const DifficultySelector: React.FC<Props> = ({ selected, onSelect }) => {
         ]}
         onPress={() => onSelect("easy")}
       >
+        <View style={styles.iconWrapper}>
+          <Ionicons
+            name="ellipse"
+            size={24}
+            color={selected === "easy" ? "#fff" : "#55efc4"}
+          />
+        </View>
         <Text
           style={[styles.buttonText, selected === "easy" && styles.activeText]}
         >
-          🟢 ЛЕГКО{"\n"}
-          <Text style={styles.small}>3-5 букв</Text>
+          ЛЕГКО
+        </Text>
+        <Text style={[styles.small, selected === "easy" && styles.activeText]}>
+          3-5 букв
         </Text>
       </TouchableOpacity>
 
@@ -33,14 +43,25 @@ export const DifficultySelector: React.FC<Props> = ({ selected, onSelect }) => {
         ]}
         onPress={() => onSelect("medium")}
       >
+        <View style={styles.iconWrapper}>
+          <Ionicons
+            name="ellipse"
+            size={24}
+            color={selected === "medium" ? "#fff" : "#feca57"}
+          />
+        </View>
         <Text
           style={[
             styles.buttonText,
             selected === "medium" && styles.activeText,
           ]}
         >
-          🟡 СЕРЕДНЬО{"\n"}
-          <Text style={styles.small}>6-8 букв</Text>
+          СЕРЕДНЬО
+        </Text>
+        <Text
+          style={[styles.small, selected === "medium" && styles.activeText]}
+        >
+          6-8 букв
         </Text>
       </TouchableOpacity>
 
@@ -52,11 +73,20 @@ export const DifficultySelector: React.FC<Props> = ({ selected, onSelect }) => {
         ]}
         onPress={() => onSelect("hard")}
       >
+        <View style={styles.iconWrapper}>
+          <Ionicons
+            name="ellipse"
+            size={24}
+            color={selected === "hard" ? "#fff" : "#ff7675"}
+          />
+        </View>
         <Text
           style={[styles.buttonText, selected === "hard" && styles.activeText]}
         >
-          🔴 ВАЖКО{"\n"}
-          <Text style={styles.small}>9+ букв</Text>
+          ВАЖКО
+        </Text>
+        <Text style={[styles.small, selected === "hard" && styles.activeText]}>
+          9+ букв
         </Text>
       </TouchableOpacity>
     </View>
@@ -71,10 +101,15 @@ const styles = StyleSheet.create({
   },
   button: {
     flex: 1,
-    padding: 15,
+    padding: 12,
     borderRadius: 15,
     borderWidth: 3,
     alignItems: "center",
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
   },
   easy: {
     borderColor: "#55efc4",
@@ -90,17 +125,24 @@ const styles = StyleSheet.create({
   },
   active: {
     backgroundColor: "#667eea",
+    transform: [{ scale: 1.02 }],
+  },
+  iconWrapper: {
+    marginBottom: 6,
   },
   buttonText: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: "bold",
     textAlign: "center",
     color: "#333",
+    marginBottom: 2,
   },
   activeText: {
     color: "#fff",
   },
   small: {
     fontSize: 10,
+    textAlign: "center",
+    color: "#666",
   },
 });

@@ -27,7 +27,7 @@ export interface GameHistory {
   difficulty: Difficulty;
   time: number;
   attempts: number;
-  stars: string;
+  stars: number;
   won: boolean;
   date: number;
 }

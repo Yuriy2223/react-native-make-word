@@ -1,8 +1,9 @@
+import { CustomAlert } from "@/components/CustomAlert";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useFocusEffect } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import {
-  Alert,
   ScrollView,
   StyleSheet,
   Text,
@@ -14,6 +15,7 @@ import { resetStats } from "../../utils/storage";
 
 export default function StatsScreen() {
   const { stats, reloadStats } = useStats();
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
@@ -22,17 +24,13 @@ export default function StatsScreen() {
   );
 
   const handleReset = () => {
-    Alert.alert("Скинути статистику?", "Точно хочеш скинути всю статистику?", [
-      { text: "Скасувати", style: "cancel" },
-      {
-        text: "Скинути",
-        style: "destructive",
-        onPress: async () => {
-          await resetStats();
-          await reloadStats();
-        },
-      },
-    ]);
+    setShowResetConfirm(true);
+  };
+
+  const confirmReset = async () => {
+    await resetStats();
+    await reloadStats();
+    setShowResetConfirm(false);
   };
 
   const lastGame = stats.history[0];
@@ -47,12 +45,23 @@ export default function StatsScreen() {
         contentContainerStyle={styles.content}
       >
         <View style={styles.card}>
-          <Text style={styles.title}>Твоя статистика</Text>
+          <View style={styles.titleContainer}>
+            <Ionicons
+              name="stats-chart"
+              size={28}
+              color="#667eea"
+              style={styles.titleIcon}
+            />
+            <Text style={styles.title}>Твоя статистика</Text>
+          </View>
 
           <LinearGradient
             colors={["#a29bfe", "#6c5ce7"]}
             style={styles.summaryCard}
           >
+            <View style={styles.summaryIconWrapper}>
+              <Ionicons name="trophy" size={32} color="#fff" />
+            </View>
             <Text style={styles.summaryValue}>
               {stats.totalWins} / {stats.totalGames}
             </Text>
@@ -64,76 +73,185 @@ export default function StatsScreen() {
               colors={["#55efc4", "#00b894"]}
               style={styles.levelCard}
             >
-              <Text style={styles.levelTitle}>🟢 ЛЕГКО</Text>
-              <Text style={styles.levelText}>
-                Зіграно: {stats.easy.played} | Виграно: {stats.easy.won}
-              </Text>
-              <Text style={styles.levelText}>
-                ⭐ Зірок: {stats.easy.totalStars}
-              </Text>
-              <Text style={styles.levelText}>
-                ⏱️ Кращий час:{" "}
-                {stats.easy.bestTime ? `${stats.easy.bestTime}с` : "-"}
-              </Text>
+              <View style={styles.levelTitleRow}>
+                <Ionicons
+                  name="ellipse"
+                  size={16}
+                  color="#fff"
+                  style={styles.levelIcon}
+                />
+                <Text style={styles.levelTitle}>ЛЕГКО</Text>
+              </View>
+              <View style={styles.statRow}>
+                <MaterialCommunityIcons
+                  name="gamepad-variant"
+                  size={14}
+                  color="#fff"
+                />
+                <Text style={styles.levelText}>
+                  Зіграно: {stats.easy.played} | Виграно: {stats.easy.won}
+                </Text>
+              </View>
+              <View style={styles.statRow}>
+                <Ionicons name="star" size={14} color="#fff" />
+                <Text style={styles.levelText}>
+                  Зірок: {stats.easy.totalStars}
+                </Text>
+              </View>
+              <View style={styles.statRow}>
+                <Ionicons name="time" size={14} color="#fff" />
+                <Text style={styles.levelText}>
+                  Кращий час:{" "}
+                  {stats.easy.bestTime ? `${stats.easy.bestTime}с` : "-"}
+                </Text>
+              </View>
             </LinearGradient>
 
             <LinearGradient
               colors={["#feca57", "#f39c12"]}
               style={styles.levelCard}
             >
-              <Text style={styles.levelTitle}>🟡 СЕРЕДНЬО</Text>
-              <Text style={styles.levelText}>
-                Зіграно: {stats.medium.played} | Виграно: {stats.medium.won}
-              </Text>
-              <Text style={styles.levelText}>
-                ⭐ Зірок: {stats.medium.totalStars}
-              </Text>
-              <Text style={styles.levelText}>
-                ⏱️ Кращий час:{" "}
-                {stats.medium.bestTime ? `${stats.medium.bestTime}с` : "-"}
-              </Text>
+              <View style={styles.levelTitleRow}>
+                <Ionicons
+                  name="ellipse"
+                  size={16}
+                  color="#fff"
+                  style={styles.levelIcon}
+                />
+                <Text style={styles.levelTitle}>СЕРЕДНЬО</Text>
+              </View>
+              <View style={styles.statRow}>
+                <MaterialCommunityIcons
+                  name="gamepad-variant"
+                  size={14}
+                  color="#fff"
+                />
+                <Text style={styles.levelText}>
+                  Зіграно: {stats.medium.played} | Виграно: {stats.medium.won}
+                </Text>
+              </View>
+              <View style={styles.statRow}>
+                <Ionicons name="star" size={14} color="#fff" />
+                <Text style={styles.levelText}>
+                  Зірок: {stats.medium.totalStars}
+                </Text>
+              </View>
+              <View style={styles.statRow}>
+                <Ionicons name="time" size={14} color="#fff" />
+                <Text style={styles.levelText}>
+                  Кращий час:{" "}
+                  {stats.medium.bestTime ? `${stats.medium.bestTime}с` : "-"}
+                </Text>
+              </View>
             </LinearGradient>
 
             <LinearGradient
               colors={["#ff7675", "#d63031"]}
               style={styles.levelCard}
             >
-              <Text style={styles.levelTitle}>🔴 ВАЖКО</Text>
-              <Text style={styles.levelText}>
-                Зіграно: {stats.hard.played} | Виграно: {stats.hard.won}
-              </Text>
-              <Text style={styles.levelText}>
-                ⭐ Зірок: {stats.hard.totalStars}
-              </Text>
-              <Text style={styles.levelText}>
-                ⏱️ Кращий час:{" "}
-                {stats.hard.bestTime ? `${stats.hard.bestTime}с` : "-"}
-              </Text>
+              <View style={styles.levelTitleRow}>
+                <Ionicons
+                  name="ellipse"
+                  size={16}
+                  color="#fff"
+                  style={styles.levelIcon}
+                />
+                <Text style={styles.levelTitle}>ВАЖКО</Text>
+              </View>
+              <View style={styles.statRow}>
+                <MaterialCommunityIcons
+                  name="gamepad-variant"
+                  size={14}
+                  color="#fff"
+                />
+                <Text style={styles.levelText}>
+                  Зіграно: {stats.hard.played} | Виграно: {stats.hard.won}
+                </Text>
+              </View>
+              <View style={styles.statRow}>
+                <Ionicons name="star" size={14} color="#fff" />
+                <Text style={styles.levelText}>
+                  Зірок: {stats.hard.totalStars}
+                </Text>
+              </View>
+              <View style={styles.statRow}>
+                <Ionicons name="time" size={14} color="#fff" />
+                <Text style={styles.levelText}>
+                  Кращий час:{" "}
+                  {stats.hard.bestTime ? `${stats.hard.bestTime}с` : "-"}
+                </Text>
+              </View>
             </LinearGradient>
           </View>
 
           {lastGame && (
             <View style={styles.lastGameSection}>
-              <Text style={styles.sectionTitle}>📜 Остання гра:</Text>
+              <View style={styles.sectionTitleRow}>
+                <Ionicons
+                  name="document-text"
+                  size={20}
+                  color="#667eea"
+                  style={styles.sectionIcon}
+                />
+                <Text style={styles.sectionTitle}>Остання гра:</Text>
+              </View>
               <View style={styles.lastGameCard}>
-                <Text style={styles.lastGameText}>
-                  <Text style={styles.bold}>Слово:</Text> {lastGame.word}
-                </Text>
-                <Text style={styles.lastGameText}>
-                  <Text style={styles.bold}>Рівень:</Text>{" "}
-                  {lastGame.difficulty === "easy"
-                    ? "🟢 Легко"
-                    : lastGame.difficulty === "medium"
-                    ? "🟡 Середньо"
-                    : "🔴 Важко"}
-                </Text>
-                <Text style={styles.lastGameText}>
-                  <Text style={styles.bold}>Час:</Text> {lastGame.time}с |{" "}
-                  <Text style={styles.bold}>Спроби:</Text> {lastGame.attempts}
-                </Text>
-                <Text style={styles.lastGameText}>
-                  <Text style={styles.bold}>Результат:</Text> {lastGame.stars}
-                </Text>
+                <View style={styles.lastGameRow}>
+                  <Ionicons
+                    name="text"
+                    size={16}
+                    color="#2d3436"
+                    style={styles.lastGameIcon}
+                  />
+                  <Text style={styles.lastGameText}>
+                    <Text style={styles.bold}>Слово:</Text> {lastGame.word}
+                  </Text>
+                </View>
+                <View style={styles.lastGameRow}>
+                  <Ionicons
+                    name="ellipse"
+                    size={16}
+                    color={
+                      lastGame.difficulty === "easy"
+                        ? "#00b894"
+                        : lastGame.difficulty === "medium"
+                        ? "#f39c12"
+                        : "#d63031"
+                    }
+                    style={styles.lastGameIcon}
+                  />
+                  <Text style={styles.lastGameText}>
+                    <Text style={styles.bold}>Рівень:</Text>{" "}
+                    {lastGame.difficulty === "easy"
+                      ? "Легко"
+                      : lastGame.difficulty === "medium"
+                      ? "Середньо"
+                      : "Важко"}
+                  </Text>
+                </View>
+                <View style={styles.lastGameRow}>
+                  <Ionicons
+                    name="time"
+                    size={16}
+                    color="#2d3436"
+                    style={styles.lastGameIcon}
+                  />
+                  <Text style={styles.lastGameText}>
+                    <Text style={styles.bold}>Час:</Text> {lastGame.time}с |{" "}
+                    <Text style={styles.bold}>Спроби:</Text> {lastGame.attempts}
+                  </Text>
+                </View>
+                <View style={styles.lastGameRow}>
+                  <Ionicons
+                    name="star"
+                    size={16}
+                    color="#2d3436"
+                    style={styles.lastGameIcon}
+                  />
+                  <Text style={styles.lastGameText}>
+                    <Text style={styles.bold}>Результат:</Text> {lastGame.stars}
+                  </Text>
+                </View>
               </View>
             </View>
           )}
@@ -143,11 +261,27 @@ export default function StatsScreen() {
               colors={["#ff7675", "#d63031"]}
               style={styles.resetGradient}
             >
-              <Text style={styles.resetButtonText}>Скинути статистику</Text>
+              <View style={styles.resetButtonContent}>
+                <Ionicons
+                  name="trash"
+                  size={20}
+                  color="#fff"
+                  style={styles.resetIcon}
+                />
+                <Text style={styles.resetButtonText}>Скинути статистику</Text>
+              </View>
             </LinearGradient>
           </TouchableOpacity>
         </View>
       </ScrollView>
+      <CustomAlert
+        visible={showResetConfirm}
+        message="Скинути статистику?"
+        type="error"
+        onConfirm={confirmReset}
+        confirmText="ТАК"
+        onClose={() => setShowResetConfirm(false)}
+      />
     </LinearGradient>
   );
 }
@@ -163,17 +297,20 @@ const styles = StyleSheet.create({
     padding: 15,
   },
   card: {
-    backgroundColor: "rgba(255, 255, 255, 0.98)",
-    borderRadius: 20,
-    padding: 20,
-    borderWidth: 3,
-    borderColor: "#fff",
+    backgroundColor: "transparent",
+  },
+  titleContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 20,
+  },
+  titleIcon: {
+    marginRight: 10,
   },
   title: {
     fontSize: 28,
     fontWeight: "bold",
-    textAlign: "center",
-    marginBottom: 20,
     color: "#667eea",
   },
   summaryCard: {
@@ -181,6 +318,9 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     marginBottom: 20,
     alignItems: "center",
+  },
+  summaryIconWrapper: {
+    marginBottom: 10,
   },
   summaryValue: {
     fontSize: 32,
@@ -200,35 +340,63 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 15,
   },
+  levelTitleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 8,
+  },
+  levelIcon: {
+    marginRight: 8,
+  },
   levelTitle: {
     fontSize: 16,
     fontWeight: "bold",
     color: "#fff",
-    marginBottom: 8,
+  },
+  statRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 4,
+    gap: 6,
   },
   levelText: {
     fontSize: 14,
     color: "#fff",
-    marginBottom: 4,
+    flex: 1,
   },
   lastGameSection: {
     marginBottom: 20,
+  },
+  sectionTitleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  sectionIcon: {
+    marginRight: 8,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: "bold",
     color: "#667eea",
-    marginBottom: 10,
   },
   lastGameCard: {
     backgroundColor: "#f0f0f0",
     padding: 15,
     borderRadius: 15,
   },
+  lastGameRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 8,
+  },
+  lastGameIcon: {
+    marginRight: 8,
+  },
   lastGameText: {
     fontSize: 14,
     color: "#2d3436",
-    marginBottom: 5,
+    flex: 1,
   },
   bold: {
     fontWeight: "bold",
@@ -236,10 +404,22 @@ const styles = StyleSheet.create({
   resetButton: {
     borderRadius: 15,
     overflow: "hidden",
+    elevation: 4,
+    shadowColor: "#d63031",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
   },
   resetGradient: {
     padding: 15,
     alignItems: "center",
+  },
+  resetButtonContent: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  resetIcon: {
+    marginRight: 8,
   },
   resetButtonText: {
     color: "#fff",

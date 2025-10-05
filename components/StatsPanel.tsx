@@ -1,3 +1,4 @@
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { StyleSheet, Text, View } from "react-native";
 import { formatTime } from "../utils/helpers";
@@ -5,25 +6,46 @@ import { formatTime } from "../utils/helpers";
 interface Props {
   time: number;
   attempts: number;
-  stars: string;
+  stars: number;
 }
 
 export const StatsPanel: React.FC<Props> = ({ time, attempts, stars }) => {
+  const renderStars = () => {
+    return Array.from({ length: 3 }, (_, i) => (
+      <Ionicons
+        key={i}
+        name={i < stars ? "star" : "star-outline"}
+        size={18}
+        color="#fff"
+        style={{ marginHorizontal: 1 }}
+      />
+    ));
+  };
+
   return (
     <View style={styles.container}>
       <LinearGradient colors={["#a29bfe", "#6c5ce7"]} style={styles.card}>
+        <View style={styles.iconWrapper}>
+          <Ionicons name="time" size={20} color="#fff" />
+        </View>
+        <Text style={styles.label}>Час</Text>
         <Text style={styles.value}>{formatTime(time)}</Text>
-        <Text style={styles.label}>⏱️ Час</Text>
       </LinearGradient>
 
       <LinearGradient colors={["#fd79a8", "#e84393"]} style={styles.card}>
+        <View style={styles.iconWrapper}>
+          <MaterialCommunityIcons name="target" size={20} color="#fff" />
+        </View>
+        <Text style={styles.label}>Спроби</Text>
         <Text style={styles.value}>{attempts}</Text>
-        <Text style={styles.label}>🎯 Спроби</Text>
       </LinearGradient>
 
       <LinearGradient colors={["#feca57", "#f39c12"]} style={styles.card}>
-        <Text style={styles.label}>⭐ Рейтинг</Text>
-        <Text style={styles.stars}>{stars}</Text>
+        <View style={styles.iconWrapper}>
+          <Ionicons name="star" size={20} color="#fff" />
+        </View>
+        <Text style={styles.label}>Рейтинг</Text>
+        <View style={styles.starsContainer}>{renderStars()}</View>
       </LinearGradient>
     </View>
   );
@@ -37,25 +59,28 @@ const styles = StyleSheet.create({
   },
   card: {
     flex: 1,
-    padding: 15,
+    padding: 12,
     borderRadius: 15,
     alignItems: "center",
     borderWidth: 2,
     borderColor: "#fff",
   },
-  value: {
-    fontSize: 24,
-    fontWeight: "bold",
-    color: "#fff",
-    marginBottom: 5,
+  iconWrapper: {
+    marginBottom: 4,
   },
   label: {
-    fontSize: 12,
+    fontSize: 11,
+    color: "rgba(255, 255, 255, 0.85)",
+    marginBottom: 4,
+    fontWeight: "600",
+  },
+  value: {
+    fontSize: 22,
+    fontWeight: "bold",
     color: "#fff",
   },
-  stars: {
-    fontSize: 20,
-    color: "#fff",
-    marginTop: 5,
+  starsContainer: {
+    flexDirection: "row",
+    alignItems: "center",
   },
 });
