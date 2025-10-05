@@ -19,7 +19,7 @@ export const useStats = () => {
     word: string,
     time: number,
     attempts: number,
-    stars: string,
+    stars: number,
     isWin: boolean
   ) => {
     const newStats = { ...stats };
@@ -30,7 +30,7 @@ export const useStats = () => {
     if (isWin) {
       newStats.totalWins++;
       newStats[difficulty].won++;
-      newStats[difficulty].totalStars += stars.length;
+      newStats[difficulty].totalStars += stars;
 
       if (
         !newStats[difficulty].bestTime ||

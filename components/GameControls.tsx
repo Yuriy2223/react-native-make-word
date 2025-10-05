@@ -1,3 +1,4 @@
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
@@ -34,8 +35,13 @@ export const GameControls: React.FC<Props> = ({
             colors={["#feca57", "#f39c12"]}
             style={styles.gradient}
           >
+            <Ionicons
+              name={showHint ? "eye-off" : "eye"}
+              size={22}
+              color="#fff"
+            />
             <Text style={styles.buttonText}>
-              {showHint ? "🙈 Сховати" : "👀 Підказка"}
+              {showHint ? "Сховати" : "Підказка"}
             </Text>
           </LinearGradient>
         </TouchableOpacity>
@@ -49,7 +55,12 @@ export const GameControls: React.FC<Props> = ({
             colors={["#74b9ff", "#0984e3"]}
             style={styles.gradient}
           >
-            <Text style={styles.buttonText}>🔄 Перемішати</Text>
+            <MaterialCommunityIcons
+              name="shuffle-variant"
+              size={22}
+              color="#fff"
+            />
+            <Text style={styles.buttonText}>Перемішати</Text>
           </LinearGradient>
         </TouchableOpacity>
 
@@ -58,7 +69,8 @@ export const GameControls: React.FC<Props> = ({
             colors={["#ff7675", "#d63031"]}
             style={styles.gradient}
           >
-            <Text style={styles.buttonText}>🎮 Нова гра</Text>
+            <Ionicons name="game-controller" size={22} color="#fff" />
+            <Text style={styles.buttonText}>Нова гра</Text>
           </LinearGradient>
         </TouchableOpacity>
       </View>
@@ -73,7 +85,15 @@ export const GameControls: React.FC<Props> = ({
             colors={["#55efc4", "#00b894"]}
             style={styles.checkGradient}
           >
-            <Text style={styles.checkButtonText}>ПЕРЕВІРИТИ</Text>
+            <View style={styles.checkContent}>
+              <Ionicons
+                name="checkmark-circle"
+                size={20}
+                color="#fff"
+                style={styles.checkIcon}
+              />
+              <Text style={styles.checkButtonText}>ПЕРЕВІРИТИ</Text>
+            </View>
           </LinearGradient>
         </TouchableOpacity>
       )}
@@ -83,47 +103,71 @@ export const GameControls: React.FC<Props> = ({
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 20,
+    marginTop: 16,
   },
   row: {
     flexDirection: "row",
-    gap: 12,
-    marginBottom: 15,
+    gap: 10,
+    marginBottom: 12,
   },
   button: {
     flex: 1,
-    borderRadius: 16,
+    borderRadius: 12,
     overflow: "hidden",
+    elevation: 3,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 3,
   },
   buttonDisabled: {
-    opacity: 0.4,
+    opacity: 0.5,
   },
   gradient: {
+    paddingVertical: 10,
+    paddingHorizontal: 8,
+    alignItems: "center",
+    justifyContent: "center",
+    minHeight: 60,
+  },
+  emoji: {
+    fontSize: 20,
+    marginBottom: 2,
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 13,
+    fontWeight: "700",
+    textAlign: "center",
+    lineHeight: 16,
+    marginTop: 4,
+  },
+  checkButton: {
+    borderRadius: 14,
+    overflow: "hidden",
+    elevation: 4,
+    shadowColor: "#00b894",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+  },
+  checkGradient: {
     paddingVertical: 14,
-    paddingHorizontal: 10,
     alignItems: "center",
     justifyContent: "center",
     minHeight: 52,
   },
-  buttonText: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "600",
-    textAlign: "center",
-  },
-  checkButton: {
-    borderRadius: 20,
-    overflow: "hidden",
-  },
-  checkGradient: {
-    paddingVertical: 16,
+  checkContent: {
+    flexDirection: "row",
     alignItems: "center",
-    minHeight: 56,
+  },
+  checkIcon: {
+    marginRight: 6,
   },
   checkButtonText: {
     color: "#fff",
-    fontSize: 18,
-    fontWeight: "bold",
-    letterSpacing: 1,
+    fontSize: 16,
+    fontWeight: "800",
+    letterSpacing: 1.5,
   },
 });
